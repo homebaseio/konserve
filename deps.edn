@@ -5,7 +5,9 @@
         fress/fress {:mvn/version "0.4.0"}
         io.replikativ/incognito {:mvn/version "0.3.66"}
         io.replikativ/hasch {:mvn/version "0.3.7"}
-        io.replikativ/superv.async {:mvn/version "0.3.43"}
+       ;;  io.replikativ/superv.async 
+        io.replikativ/superv.async {:git/url "https://github.com/homebaseio/superv.async"
+                                    :sha "0cd05df5352b482b50729ea3bbe63746e566ef7a"}
         org.clojars.mmb90/cljs-cache {:mvn/version "0.1.4"}
         ;; reactivate for nodejs support
         ;com.google.javascript/closure-compiler-unshaded {:mvn/version "v20190325"}
