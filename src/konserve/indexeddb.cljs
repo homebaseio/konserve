@@ -1,16 +1,15 @@
 (ns konserve.indexeddb
   (:require [incognito.edn :refer [read-string-safe]]
-            [konserve.core :as k]
             [konserve.serializers :as ser]
-            [konserve.protocols :refer [PEDNAsyncKeyValueStore -exists? -get -update-in -assoc-in -get-meta
-                                        PBinaryAsyncKeyValueStore -bget -bassoc
+            [konserve.protocols :refer [PEDNKeyValueStore -exists? -get -update-in -assoc-in -get-meta
+                                        PBinaryKeyValueStore -bget -bassoc
                                         PStoreSerializer -serialize -deserialize]]
-            [cljs.core.async :as async :refer (take! <! >! put! close! chan poll!)])
+            [cljs.core.async :refer (take! <! >! put! close! chan poll!)])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defrecord IndexedDBKeyValueStore [db store-name serializer read-handlers write-handlers locks version]
-  PEDNAsyncKeyValueStore
-  (-exists? [this key]
+  PEDNKeyValueStore
+  (-exists? [_this key]
     (let [res       (chan)
           tx        (.transaction db #js [store-name])
           obj-store (.objectStore tx store-name)
@@ -29,7 +28,7 @@
               (close! res)))
       res))
 
-  (-get-meta [this key]
+  (-get-meta [_this key]
     (let [res       (chan)
           tx        (.transaction db #js [store-name])
           obj-store (.objectStore tx store-name)
@@ -66,7 +65,7 @@
       res))
 
   (-assoc-in [this key-vec meta-up val] (-update-in this key-vec meta-up (fn [_] val) []))
-  (-update-in [this key-vec meta-up up-fn args]
+  (-update-in [_this key-vec meta-up up-fn args]
     (let [[fkey & rkey] key-vec
           res           (chan)
           tx            (.transaction db #js [store-name] "readwrite")
@@ -114,7 +113,7 @@
                   (close! res)))))
       res))
 
-  (-dissoc [this key]
+  (-dissoc [_this key]
     (let [res       (chan)
           tx        (.transaction db #js [store-name] "readwrite")
           obj-store (.objectStore tx store-name)
@@ -131,8 +130,8 @@
               (close! res)))
       res))
 
-  PBinaryAsyncKeyValueStore
-  (-bget [this key lock-cb]
+  PBinaryKeyValueStore
+  (-bget [_this key lock-cb]
     (let [res       (chan)
           tx        (.transaction db #js [store-name])
           obj-store (.objectStore tx store-name)

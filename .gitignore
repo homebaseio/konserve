@@ -12,8 +12,11 @@ out
 .shadow-cljs
 .cpcache
 .calva
+.lsp
+.dir-locals.el
 node_modules
-public 
+public
 
 .idea
 *.iml
+package-lock.json
