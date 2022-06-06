@@ -37,18 +37,14 @@
   (Lz4Compressor. serializer))
 
 #?(:clj
-   (defmacro native-image-build? []
-     (try
-       (and (Class/forName "org.graalvm.nativeimage.ImageInfo")
-            #_(eval '(org.graalvm.nativeimage.ImageInfo/inImageBuildtimeCode)))
-       (catch Exception _
-         false))))
+   (defn graal-native? []
+     (= "true" (System/getProperty "com.oracle.graalvm.isaot"))))
 
 (def byte->compressor
   {0 null-compressor
    1 #?(:clj (try
               ;; LZ4 requires native code that breaks the native-image executable atm.
-               (if (native-image-build?)
+               (if (graal-native?)
                  unsupported-lz4-compressor
                  lz4-compressor)
                (catch Exception _
